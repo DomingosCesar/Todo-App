@@ -68,6 +68,14 @@ DATABASES = {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     }
+    # 'default':{
+    #     'ENGINE': 'django.db.backends.postgresql',
+    #     'NAME':'Umbundu-Plataform',
+    #     'USER': 'postgres',
+    #     'PASSWORD': 'DomingosCesar@99',
+    #     'HOST': 'localhost',
+    #     'PORT': 5432,
+    # },
 }
 
 
@@ -119,3 +127,19 @@ MEDIA_ROOT = BASE_DIR.joinpath('media/')
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+AUTH_USER_MODEL = "core.User"
+
+AUTHENTICATION_BACKENDS = [
+    'core.backend.PhoneOrEmailBackend',
+    'django.contrib.auth.backends.ModelBackend',
+]
+
+# Email settings
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'domingoscesar2001@gmail.com'  # Your Gmail address
+EMAIL_HOST_PASSWORD = 'rdwmomcufnkjayip'  # Your app password
+DEFAULT_FROM_EMAIL = 'domingoscesar2001@gmail.com'
