@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+    {% if name == 'login' %}
+        login
+    {% elif name == 'register' %}
+        register
+    {% endif %}
+    </title>
+</head>
+<body>
+    <header>
+        <h2>Todo App</h2>
+    </header>
+    <main>
+        
+        {% if name == 'register' %}
+            <section>
+                <h3>Register</h3>
+                <form action="{% url 'login' %}" method="post">
+                    {% csrf_token %}
+                    <input type="email" name="email" id="email_id" placeholder="example@mail.com">
+                    <br><br>
+                    <input type="password" name="password" id="password_id" placeholder="********">
+                    <br><br>
+                    <input type="password" name="confirm_password" id="confirm_password_id" placeholder="********">
+                    <br><br>
+                    <button type="submit">Register</button>
+                </form>
+                <div>
+                    <p>Are you already registered? <a href="{% url 'login' %}">Login</a></p>
+                </div>
+            </section>
+        {% else %}
+            <section>
+                <h3>Login</h3>
+                <form action="{% url 'login' %}" method="post">
+                    {% csrf_token %}
+                    <input type="email" name="email" id="email_id" placeholder="example@mail.com">
+                    <br><br>
+                    <input type="password" name="password" id="password_id" placeholder="********">
+                    <br><br>
+                    <button type="submit">Login</button>
+                </form>
+                <div>
+                    <p>Are you not already registered? <a href="{% url 'register' %}">Register</a></p>
+                </div>
+            </section>
+        {% endif %}
+            
+    </main>
+</body>
+</html>
