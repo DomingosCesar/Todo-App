@@ -15,7 +15,7 @@ class CustomUserAdmin(UserAdmin):
 
 class CustomProfileAdmin(admin.ModelAdmin):
     model = Profile
-    list_display = []
+    list_display = ['user']
     search_fields = []
     readonly_fields = []
     

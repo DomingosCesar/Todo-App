@@ -1,12 +1,16 @@
 from django.shortcuts import render, redirect
 from django.core.paginator import Paginator
 from django.contrib.auth import authenticate, login, logout
+# from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from .forms import UserRegisterForm, UserLoginForm
 
 User = get_user_model()
+
 class Core:
+    @login_required(login_url='login')
     def index(request):
         return render(request, 'index.html')
 
@@ -40,4 +44,39 @@ class Auth:
     
     def login(request):
         name = 'login'
-        return render(request, 'auth/auth_form.html', {'name':name})
+        form = UserLoginForm()
+        if request.method == 'POST':
+            form = UserLoginForm(request.POST)
+            # if form.is_valid():
+            #     authenticate()
+            #     return redirect('index')
+            # else:
+            #     messages.info(request, '') 
+            #     return redirect('login')
+            if form.is_valid():
+                identifier = form.cleaned_data['identifier']
+                password = form.cleaned_data['password']
+                # pass identifier (email or phone) to authentication backend
+                user = authenticate(request, identifier=identifier, password=password)
+                print("Ola....", user)
+            if user is not None:
+                login(request, user)
+                messages.success(request, 'Login realizado com sucesso.')
+                return redirect('index')
+            else:
+                messages.warning(request, 'Email ou senha inválidos.')
+                print('Email/phone ou senha inválidos')
+                return redirect('login')
+        else:
+            # print(form)
+            messages.warning(request, 'Por favor, corrija os erros abaixo.')
+        # else:
+        #     messages.warning(request, 'Por favor, corrija os erros abaixo.')
+        #     return redirect('login')
+        return render(request, 'auth/auth_form.html', {'name':name, 'form':form})
+    
+    @login_required(login_url='login')
+    def logout_view(request):
+        logout(request)
+        request.session.delete()
+        return redirect('login')

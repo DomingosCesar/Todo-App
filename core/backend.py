@@ -28,7 +28,7 @@ class PhoneOrEmailBackend(ModelBackend):
             else:
                 # try to find user via related Profile.phone_number (safe)
                 for u in User.objects.all():
-                    profile = getattr(u, 'profile', None)
+                    profile = getattr(u, 'profiles', None)
                     if profile and profile.phone_number == ident:
                         user = u
                         break
@@ -41,4 +41,4 @@ class PhoneOrEmailBackend(ModelBackend):
         except User.DoesNotExist:
             return None
 
-        return None
+        # return None

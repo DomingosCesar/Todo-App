@@ -11,7 +11,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-k8#wro1bij-_no16q%-17*(q0ofvevi(!#&j-7-ll@e=c$)wqa'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
@@ -129,7 +129,7 @@ MEDIA_ROOT = BASE_DIR.joinpath('media/')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = "core.User"
-
+LOGIN_REDIRECT = 'login'
 AUTHENTICATION_BACKENDS = [
     'core.backend.PhoneOrEmailBackend',
     'django.contrib.auth.backends.ModelBackend',
