@@ -1,11 +1,13 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.core.paginator import Paginator
 from django.contrib.auth import authenticate, login, logout
+# from django.contrib.auth.models
 # from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from .utils import send_reset_password_email
 from django.contrib.auth import get_user_model
-from .forms import UserRegisterForm, UserLoginForm
+from .forms import UserRegisterForm, UserLoginForm, PassWordResetForm
 
 User = get_user_model()
 
@@ -74,6 +76,42 @@ class Auth:
         #     messages.warning(request, 'Por favor, corrija os erros abaixo.')
         #     return redirect('login')
         return render(request, 'auth/auth_form.html', {'name':name, 'form':form})
+    
+    def password_reset_view(request):
+        if request.method == 'POST':
+            try:
+                print(request.POST.get('email_reset'))
+                email = request.POST.get('email_reset')
+                user = get_object_or_404(User, email=email)
+                print(user)
+                # send_reset_password_email(user)
+                messages.warning(request, 'Awesome, you will receive an email in your box. Click in button to reset your password!')
+            except:
+                messages.warning(request, 'Unfortunately this e-mail is not associated with your account!')
+                print('Nao existe!') 
+            
+        return render(request, 'auth/password_reset_view.html')
+    
+    def password_reset(request, id:int):
+        form = PassWordResetForm()
+        user = User.objects.get(id=id)
+        if request.method == 'POST':
+            form = PassWordResetForm(request.POST)
+            print(form)
+            if form.is_valid():
+                if request.POST.get('password') == request.POST.get('confirm_password'):
+                    # print(request.POST.get('password'))
+                    new_password = str(request.POST.get('password'))
+                    user.set_password(new_password)
+                    user.save()
+                    messages.success(request, 'Successful resetting Password!')
+                    return redirect('login')
+                else:
+                    messages.warning(request, 'Passwords are different!')
+            else:
+                messages.warning(request, 'Fail Resetting password, because form is invalid!')
+                
+        return render(request, 'auth/password_reset.html', {'form':form, 'user':user})
     
     @login_required(login_url='login')
     def logout_view(request):

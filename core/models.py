@@ -10,7 +10,7 @@ class User(AbstractUser):
     """
     # name = models.CharField(max_length=100, null=False, blank=False)
     email = models.EmailField(max_length=150, unique=True, null=False, blank=False)
-    password_hash = models.CharField(max_length=255, null=False, blank=False) # Armazene has da senha (use make_password no forms)
+    # password_hash = models.CharField(max_length=255, null=False, blank=False) # Armazene has da senha (use make_password no forms)
     date_create = models.DateTimeField(auto_now_add=True)
     active = models.BooleanField(default=True)
     

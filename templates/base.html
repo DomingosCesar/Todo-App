@@ -6,6 +6,7 @@
     <title>{% block title %}{% endblock title %}</title>
 </head>
 <body>
+    {% include './partials/messages.html' %}
     <header>
         {% if request.user.is_authenticated %}
             <a href="{% url 'logout' %}">logout</a>

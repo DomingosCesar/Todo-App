@@ -6,6 +6,8 @@ urlpatterns = [
     # Authentication routes
     path('auth/login/', views.Auth.login, name='login'),
     path('auth/register/', views.Auth.register, name='register'),
-    path('auth/register/store', views.Auth.store, name='store'),
-    path('auth/logout', views.Auth.logout_view, name='logout')
+    path('auth/register/store/', views.Auth.store, name='store'),
+    path('auth/logout/', views.Auth.logout_view, name='logout'),
+    path('auth/reset-password/', views.Auth.password_reset_view, name='reset-password-view'),
+    path('auth/reset-password/<int:id>/', views.Auth.password_reset, name='reset-password'),
 ]
