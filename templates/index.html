@@ -5,6 +5,42 @@
 {% block content %}
     <section>
         <h3>Todo List</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Title</th>
+                    <th>Category</th>
+                    <th>Status</th>
+                    <th>Priority</th>
+                    <th>Date Expired</th>
+                    <th>Description</th>
+                    <th>Operações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for task in tasks %}
+                    <tr>
+                        <td>{{ task.id }}</td>
+                        <td>{{ task.title }}</td>
+                        <td>{{ task.category }}</td>
+                        <td>{{ task.status }}</td>
+                        <td>{{ task.priority }}</td>
+                        <td>{{ task.date_expired }}</td>
+                        <td>{{ task.description }}</td>
+                        <td><a href="{% url 'task_update' task.id %}">Editar</a></td>
+                        <td><a href="{% url 'task_delete' task.id %}">Deletar</a></td>
+                    </tr>
+                {% empty %}
+                    <td>Nenhuma Task adicionado!</td>
+                {% endfor %}
+                    
+                </tr>
+            </tbody>
+        </table>
     </section>
-    
+    <section>
+        <h4>Create Task</h4>
+        <a href="{% url 'task' %}">Add Task</a>
+    </section>
 {% endblock content %}

@@ -41,6 +41,9 @@ class Category(models.Model):
             models.Index(fields=['name', 'user']),
         ]
     
+    # def save(self, **kwargs):
+    #     super().save(**kwargs)
+    
     def __str__(self):
         return self.name
     
@@ -51,6 +54,7 @@ class Task(models.Model):
     """ 
     title = models.CharField(max_length=200, null=False, blank=False)
     description = models.TextField(blank=True, null=True)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='category', null=True, blank=True)
     date_expired = models.DateField(null=True, blank=True)
     priority  = models.CharField(max_length=10, choices=PRIORITY_CHOICES, default='MEDIA')
     status = models.CharField(max_length=15, choices=STATUS_CHOICES, default='PENDENTE')
