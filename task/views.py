@@ -1,13 +1,16 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators import csrf
+from django.http import JsonResponse
+# from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
+from rest_framework import serializers
 from django.contrib import messages
 from django.views import View
 from .forms import TaskForm
 from .models import Task
-
-
+import json
 
 class TaskCreateView(LoginRequiredMixin, View):
     """
@@ -81,3 +84,14 @@ class TaskDeleteView(LoginRequiredMixin, View):
         
         return redirect("index")
     
+class ProgressUpdateView(View):
+    @csrf_exempt
+    def get(self, request, id, *args, **kwargs):
+        task = Task.objects.get(id=id)
+        # task.update_progress_points()
+        print(task.progress_points)
+        return JsonResponse(data={"data":task.progress_points}, status=200)
+
+class ProgressView(LoginRequiredMixin, View):
+    def get(self, request, *args, **kwargs):
+        pass

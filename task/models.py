@@ -1,7 +1,7 @@
 from django.db import models
 from core.models import User
 from django.core.validators import MinValueValidator, MaxValueValidator
-
+import datetime
 
 # Escolhas para campos ENUM
 PRIORITY_CHOICES = [
@@ -56,9 +56,12 @@ class Task(models.Model):
     description = models.TextField(blank=True, null=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='category', null=True, blank=True)
     date_expired = models.DateField(null=True, blank=True)
+    day_expired = models.IntegerField(default=0, null=True, blank=True)
     priority  = models.CharField(max_length=10, choices=PRIORITY_CHOICES, default='MEDIA')
     status = models.CharField(max_length=15, choices=STATUS_CHOICES, default='PENDENTE')
     user = models.ForeignKey(User, on_delete=models.SET_NULL, related_name='tasks', null=True, blank=True)
+    progress_points = models.IntegerField(default=0, validators=[MinValueValidator(0), MaxValueValidator(100)], null=True, blank=True)
+    visible_button = models.BooleanField(default=True)
     date_creation = models.DateTimeField(auto_now_add=True)
     date_update = models.DateTimeField(auto_now=True)
     
@@ -74,6 +77,24 @@ class Task(models.Model):
     
     def __str__(self):
         return self.title
+    
+    def set_visible_button(self):
+        if datetime.date.today() < self.date_expired and datetime.date.today() < self.date_expired:
+            self.visible_button = False
+    
+    def divide_(self): return int((100 // self.day_expired))
+    
+    def update_progress_points(self): self.progress_points += self.divide_()
+    
+    def get_progress_points(self): return self.progress_points
+    
+    def get_day_expired(self):
+        if (self.date_expired.year == self.date_creation.year) and (self.date_expired.month > self.date_creation.month) and (self.date_expired.day > self.date_creation.day):
+            self.day_expired = int(self.date_expired.day - self.date_creation.day)
+        elif (self.date_expired.year == self.date_creation.year) and (self.date_expired.month == self.date_creation.month) and (self.date_expired.day > self.date_creation.day):
+            self.progress_points = int(self.date_expired.day - self.date_creation.day)
+        elif (self.date_expired.year > self.date_creation.year) and (self.date_expired.month < self.date_creation.month) and (self.date_expired.day < self.date_creation.day):
+            self.progress_points = int(self.date_creation.day - self.date_expired.day)
     
 
 class Progress(models.Model):
@@ -93,6 +114,10 @@ class Progress(models.Model):
         
     def __str__(self):
         return f'Progress of {self.task.title}: {self.percentage}%'
+    
+    def updateProgress(self):
+        """ A percentagem é atualizada conoforme o estado da tarefa avança, com base"""
+        self.percentage = 0
     
 
 class Notification(models.Model):

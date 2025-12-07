@@ -15,6 +15,7 @@
                     <th>Priority</th>
                     <th>Date Expired</th>
                     <th>Description</th>
+                    <th>Progress</th>
                     <th>Operações</th>
                 </tr>
             </thead>
@@ -28,6 +29,7 @@
                         <td>{{ task.priority }}</td>
                         <td>{{ task.date_expired }}</td>
                         <td>{{ task.description }}</td>
+                        <td>{{ task.get_progress_points }} <button type="button" id="markId" class="{{ task.id }}">Mark</button></td>
                         <td><a href="{% url 'task_update' task.id %}">Editar</a></td>
                         <td><a href="{% url 'task_delete' task.id %}">Deletar</a></td>
                     </tr>
@@ -43,4 +45,45 @@
         <h4>Create Task</h4>
         <a href="{% url 'task' %}">Add Task</a>
     </section>
+
+    <script>
+
+        const mark_button = document.querySelector("#markId")
+
+        const taskId = mark_button.classList.value
+
+        const fetchProgress = async (id) => {
+            try {
+                    const response = await fetch(`task/progress/${id}`, {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': '{{ csrf_token }}' // Agora com CSRF para seguranca
+                        },
+                    });
+                    if (!response.ok) {
+                        throw new Error('Error in request');
+                    }
+
+                    const data = await response.json();
+                    console.log(data)
+                    
+                } catch (error) {
+                    console.error('Error', error);
+                }
+        }
+        
+        mark_button.addEventListener("click",  async() => {
+            if (mark_button.textContent !== "Marked"){
+                await fetchProgress(taskId);
+                mark_button.textContent = "Marked"
+            }
+            else 
+                mark_button.textContent = "Mark"
+            //window.onload(()=>{})
+            console.log(mark_button.textContent)
+
+        });
+</script>
 {% endblock content %}
+
