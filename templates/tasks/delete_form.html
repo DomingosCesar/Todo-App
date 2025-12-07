@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block title %}Task - Delete{% endblock title %}
+
+{% block content %}
+<section>
+    <h2>Deleting Task</h2>
+    <form action="{% url 'task_delete' task.id %}" method="post">
+        {% csrf_token %}
+        <p>Are you sure that you want to delete this task {{ task.title }}?</p>
+        <button type="submit">Delete</button>
+        <a href="{% url 'index' %}">Cancelar</a>
+    </form>
+</section>
+{% endblock content %}
