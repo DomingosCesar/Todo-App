@@ -26,6 +26,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'core.apps.CoreConfig',
+    'auths.apps.AuthsConfig',
     'task.apps.TaskConfig',
     'api.apps.ApiConfig',
 ]
@@ -128,7 +129,7 @@ MEDIA_ROOT = BASE_DIR.joinpath('media/')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-AUTH_USER_MODEL = "core.User"
+AUTH_USER_MODEL = "auths.User"
 LOGIN_URL = "/auth/login"
 LOGIN_REDIRECT = 'login'
 AUTHENTICATION_BACKENDS = [

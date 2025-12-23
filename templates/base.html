@@ -1,22 +1,33 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}{% endblock title %}</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+    
 </head>
 <body>
     {% include './partials/messages.html' %}
     <header>
-        {% if request.user.is_authenticated %}
-            <a href="{% url 'logout' %}">logout</a>
-        {% else %}
-            <span>Infelizmente vc nao esta logado na plataforma</span>
-        {% endif %}
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h1 style="color: #64c8ff; font-size: 1.5rem;">✨ Task Manager</h1>
+            {% if request.user.is_authenticated %}
+                <div style="display: flex; gap: 2rem; align-items: center;">
+                    <span style="color: rgba(255, 255, 255, 0.7);">Bem-vindo, <strong>{{ request.user.username }}</strong></span>
+                    <a href="{% url 'logout' %}">🚪 Logout</a>
+                </div>
+            {% else %}
+                <span>⚠️ Você não está logado na plataforma</span>
+            {% endif %}
+        </div>
     </header>
     <main>
         {% block content %}{% endblock content %}
     </main>
-    <footer></footer>
+    <footer>
+        <p>&copy; 2025 Task Manager. Desenvolvido com ✨ e ❤️</p>
+    </footer>
 </body>
 </html>

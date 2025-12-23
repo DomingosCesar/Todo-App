@@ -1,6 +1,6 @@
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
-from .models import User, Profile
+from auths.models import User, Profile
 from .utils import send_mail, send_welcome_email, send_profile_update_email
 
 @receiver(post_save, sender=User)

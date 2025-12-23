@@ -1,5 +1,5 @@
 from django.db import models
-from core.models import User
+from auths.models import User
 from django.core.validators import MinValueValidator, MaxValueValidator
 import datetime
 
@@ -56,12 +56,14 @@ class Task(models.Model):
     description = models.TextField(blank=True, null=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='category', null=True, blank=True)
     date_expired = models.DateField(null=True, blank=True)
-    day_expired = models.IntegerField(default=0, null=True, blank=True)
     priority  = models.CharField(max_length=10, choices=PRIORITY_CHOICES, default='MEDIA')
     status = models.CharField(max_length=15, choices=STATUS_CHOICES, default='PENDENTE')
     user = models.ForeignKey(User, on_delete=models.SET_NULL, related_name='tasks', null=True, blank=True)
     progress_points = models.IntegerField(default=0, validators=[MinValueValidator(0), MaxValueValidator(100)], null=True, blank=True)
-    visible_button = models.BooleanField(default=True)
+    
+    
+    concluded = models.BooleanField(default=False)
+    
     date_creation = models.DateTimeField(auto_now_add=True)
     date_update = models.DateTimeField(auto_now=True)
     
@@ -78,13 +80,9 @@ class Task(models.Model):
     def __str__(self):
         return self.title
     
-    def set_visible_button(self):
-        if datetime.date.today() < self.date_expired and datetime.date.today() < self.date_expired:
-            self.visible_button = False
+    # def divide_(self): return int((100 // self.day_expired))
     
-    def divide_(self): return int((100 // self.day_expired))
-    
-    def update_progress_points(self): self.progress_points += self.divide_()
+    # def update_progress_points(self): self.progress_points += self.divide_()
     
     def get_progress_points(self): return self.progress_points
     
@@ -96,6 +94,24 @@ class Task(models.Model):
         elif (self.date_expired.year > self.date_creation.year) and (self.date_expired.month < self.date_creation.month) and (self.date_expired.day < self.date_creation.day):
             self.progress_points = int(self.date_creation.day - self.date_expired.day)
     
+
+
+class DailyRegister(models.Model):
+    """
+    Registra cada vez que um usuário marca a tarefa como 'feita' no dia.
+    """
+    task = models.ForeignKey(Task, on_delete=models.CASCADE)
+    # Define a data atual automaticamente na criação.
+    conclusion_date = models.DateField(auto_now_add=True) 
+    completed_per = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+
+    class Meta:
+        # A restrição de banco de dados mais importante: garante que a mesma Tarefa 
+        # só pode ser marcada como 'feita' UMA VEZ por dia.
+        unique_together = ('task', 'completed_per')
+
+    def __str__(self):
+        return f"Feito em {self.conclusion_date} por {self.completed_per.username}"
 
 class Progress(models.Model):
     """
@@ -170,3 +186,13 @@ class Report(models.Model):
     def __str__(self):
         return f'Report of {self.user.name} ({self.initial_period} to {self.end_period})'
     
+    
+class Preference(models.Model):
+    """
+        Define the system preferences
+    """
+    # Preferências de UI
+    theme = models.CharField(max_length=5, choices=[('dark', 'Dark'), ('light', 'Light')], default='dark')
+    language = models.CharField(max_length=2, choices=[('pt', 'Português'), ('en', 'Inglês')], default='pt')
+    
+    def __str__(self): return f"Theme: {self.theme}, Language: {self.language}"

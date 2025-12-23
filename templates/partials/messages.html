@@ -1,27 +1,122 @@
 {% load static %}
 <style>
-    .alert {
-        width:35rem;    
-        text-align: center;
-        position:absolute;
-        top: 10px;
-        left: 125px;
-        right: 0;
-        margin: auto;
-        z-index: 1;
+    .messages {
+        position: fixed;
+        top: 100px;
+        right: 20px;
+        z-index: 1000;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .message {
+        background: rgba(48, 43, 99, 0.95);
+        border: 2px solid rgba(100, 200, 255, 0.5);
+        border-radius: 10px;
+        padding: 1rem 1.5rem;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+        max-width: 350px;
+        animation: slideInDown 0.4s ease-out;
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+    }
+
+    .message.success {
+        border-color: rgba(81, 207, 102, 0.7);
+        color: #51cf66;
+    }
+
+    .message.error {
+        border-color: rgba(255, 107, 107, 0.7);
+        color: #ff6b6b;
+    }
+
+    .message.warning {
+        border-color: rgba(255, 165, 0, 0.7);
+        color: #ffa500;
+    }
+
+    .message.info {
+        border-color: rgba(100, 200, 255, 0.7);
+        color: #64c8ff;
+    }
+
+    .message::before {
+        content: '';
+        display: inline-block;
+        width: 4px;
+        height: 100%;
+        border-radius: 2px;
+    }
+
+    .message.success::before {
+        background: #51cf66;
+    }
+
+    .message.error::before {
+        background: #ff6b6b;
+    }
+
+    .message.warning::before {
+        background: #ffa500;
+    }
+
+    .message.info::before {
+        background: #64c8ff;
+    }
+
+    @keyframes slideInDown {
+        from {
+            opacity: 0;
+            transform: translateY(-30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @media (max-width: 768px) {
+        .messages {
+            right: 10px;
+            left: 10px;
+        }
+
+        .message {
+            max-width: none;
+        }
     }
 </style>
 
 {% if messages %}
-    {% for message in messages %}
-        <div class="alert alert-{{ message.tags }} alert-dismissible fade show text-center" role="alert">
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            <strong>{{ message }}</strong>
-        </div>
-    {% endfor %}
+    <div class="messages">
+        {% for message in messages %}
+            <div class="message {{ message.tags }}">
+                <span>{{ message }}</span>
+            </div>
+        {% endfor %}
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const messages = document.querySelectorAll('.message');
+            messages.forEach(message => {
+                setTimeout(() => {
+                    message.style.opacity = '0';
+                    message.style.transform = 'translateY(-30px)';
+                    message.style.transition = 'all 0.3s ease-out';
+                    setTimeout(() => message.remove(), 300);
+                }, 4000);
+            });
+        });
+    </script>
+
 {% endif %}
 
-<script src="{% static 'js/jquery-3.5.1.min.js' %}"></script>
+{% comment %} <script src="{% static 'js/jquery-3.5.1.min.js' %}"></script> {% endcomment %}
 
 <script>
     $(document).ready(function() {
