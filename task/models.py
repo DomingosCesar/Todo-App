@@ -1,7 +1,7 @@
 from django.db import models
 from auths.models import User
 from django.core.validators import MinValueValidator, MaxValueValidator
-import datetime
+from datetime import date
 
 # Escolhas para campos ENUM
 PRIORITY_CHOICES = [
@@ -88,11 +88,17 @@ class Task(models.Model):
     
     def get_day_expired(self):
         if (self.date_expired.year == self.date_creation.year) and (self.date_expired.month > self.date_creation.month) and (self.date_expired.day > self.date_creation.day):
-            self.day_expired = int(self.date_expired.day - self.date_creation.day)
+            return int(self.date_expired.day - self.date_creation.day)
         elif (self.date_expired.year == self.date_creation.year) and (self.date_expired.month == self.date_creation.month) and (self.date_expired.day > self.date_creation.day):
-            self.progress_points = int(self.date_expired.day - self.date_creation.day)
+            return int(self.date_expired.day - self.date_creation.day)
         elif (self.date_expired.year > self.date_creation.year) and (self.date_expired.month < self.date_creation.month) and (self.date_expired.day < self.date_creation.day):
-            self.progress_points = int(self.date_creation.day - self.date_expired.day)
+            return int(self.date_creation.day - self.date_expired.day)
+    
+    def verifying_schedule_finished(self):
+        if self.date_expired == date.today():
+            return True
+        else: return False
+    
     
 
 
@@ -113,6 +119,13 @@ class DailyRegister(models.Model):
     def __str__(self):
         return f"Feito em {self.conclusion_date} por {self.completed_per.username}"
 
+    def conclusion_date_update(self):
+        if not self.task.verifying_schedule_finished() and self.conclusion_date == date.today():
+            self.conclusion_date = date.today().replace(day=date.today().day + 1)
+        else: self.conclusion_date = self.task.date_expired
+    
+    def conclude_daily(self):
+        return self.conclusion_date == date.today()
 class Progress(models.Model):
     """
         Tracking the progress of each task (relationship 1:1)
